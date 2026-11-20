@@ -1,69 +1,68 @@
-
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IAttachment extends Document {
-  kind: 'file' | 'link'
-  scope: 'project' | 'task'
+  kind: "file" | "link";
+  scope: "project" | "task";
+  version?: number;
+  workspace: mongoose.Types.ObjectId;
+  project: mongoose.Types.ObjectId;
+  task?: mongoose.Types.ObjectId;
 
-  workspace: mongoose.Types.ObjectId
-  project: mongoose.Types.ObjectId
-  task?: mongoose.Types.ObjectId
-
-  uploadedBy: mongoose.Types.ObjectId
+  uploadedBy: mongoose.Types.ObjectId;
 
   // File information
-  originalName?: string
-  mimeType?: string
-  size?: number
-  publicId?: string
-  resourceType?: 'image' | 'raw'
-  format?: string
+  originalName?: string;
+  mimeType?: string;
+  size?: number;
+  publicId?: string;
+  resourceType?: "image" | "raw";
+  format?: string;
 
   // Link information
-  title?: string
-  url?: string
+  title?: string;
+  url?: string;
 
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const attachmentSchema = new Schema<IAttachment>(
   {
     kind: {
       type: String,
-      enum: ['file', 'link'],
+      enum: ["file", "link"],
       required: true,
     },
 
     scope: {
       type: String,
-      enum: ['project', 'task'],
+      enum: ["project", "task"],
       required: true,
     },
 
     workspace: {
       type: Schema.Types.ObjectId,
-      ref: 'Workspace',
+      ref: "Workspace",
       required: true,
       index: true,
     },
 
     project: {
       type: Schema.Types.ObjectId,
-      ref: 'Project',
+      ref: "Project",
       required: true,
       index: true,
     },
 
     task: {
       type: Schema.Types.ObjectId,
-      ref: 'Task',
+      ref: "Task",
       index: true,
     },
 
     uploadedBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
 
@@ -90,12 +89,15 @@ const attachmentSchema = new Schema<IAttachment>(
 
     resourceType: {
       type: String,
-      enum: ['image', 'raw'],
+      enum: ["image", "raw"],
     },
 
     format: {
       type: String,
       trim: true,
+    },
+    version: {
+      type: Number,
     },
 
     title: {
@@ -110,16 +112,13 @@ const attachmentSchema = new Schema<IAttachment>(
       maxlength: 2048,
     },
   },
-  { timestamps: true }
-)
+  { timestamps: true },
+);
 
-attachmentSchema.index({ project: 1, createdAt: -1 })
-attachmentSchema.index({ task: 1, createdAt: -1 })
-attachmentSchema.index({ uploadedBy: 1 })
+attachmentSchema.index({ project: 1, createdAt: -1 });
+attachmentSchema.index({ task: 1, createdAt: -1 });
+attachmentSchema.index({ uploadedBy: 1 });
 
-const Attachment = mongoose.model<IAttachment>(
-  'Attachment',
-  attachmentSchema
-)
+const Attachment = mongoose.model<IAttachment>("Attachment", attachmentSchema);
 
-export default Attachment
+export default Attachment;

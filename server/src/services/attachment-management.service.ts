@@ -140,12 +140,13 @@ const serializeAttachment = (attachment: any) => {
   }
 
   const fileUrl = cloudinary.url(data.publicId, {
-    secure: true,
-    sign_url: true,
-    resource_type: data.resourceType,
-    type: 'authenticated',
-  })
-
+  secure: true,
+  sign_url: true,
+  resource_type: data.resourceType,
+  type: 'authenticated',
+  version: data.version,
+  format: data.format,
+})
   return { ...data, fileUrl }
 }
 
@@ -208,6 +209,7 @@ export const createFileAttachment = async (
       publicId: uploaded.public_id,
       resourceType: uploaded.resource_type,
       format: uploaded.format,
+      version: uploaded.version,
     })
 
     await attachment.populate('uploadedBy', 'name username')

@@ -15,6 +15,7 @@ interface CloudinaryUploadResult {
   resource_type: 'image' | 'raw'
   format?: string
   bytes: number
+  version: number
   secure_url: string
 }
 
@@ -25,8 +26,7 @@ const uploadToCloudinary = (
     const isImage = file.mimeType.startsWith('image/')
     const resourceType = isImage ? 'image' : 'raw'
 
-    const extension = file.originalName.split('.').pop()?.toLowerCase()
-    const publicId = `${randomUUID()}${extension ? `.${extension}` : ''}`
+    const publicId = randomUUID()
 
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -41,7 +41,7 @@ const uploadToCloudinary = (
           reject(error ?? new Error('Cloudinary upload failed'))
           return
         }
-
+        
         resolve(result as CloudinaryUploadResult)
       }
     )
