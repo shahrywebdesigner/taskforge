@@ -2,12 +2,18 @@ interface ButtonProps {
   children: React.ReactNode
   variant?: 'primary' | 'secondary'
   type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  className?: string
+  onClick?: () => void
 }
 
 function Button({
   children,
   variant = 'primary',
   type = 'button',
+  disabled = false,
+  className = '',
+  onClick,
 }: ButtonProps) {
   const styles = {
     primary: 'bg-indigo-600 text-white hover:bg-indigo-700',
@@ -17,7 +23,9 @@ function Button({
   return (
     <button
       type={type}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition ${styles[variant]}`}
+      disabled={disabled}
+      onClick={onClick}
+      className={`rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${styles[variant]} ${className}`}
     >
       {children}
     </button>

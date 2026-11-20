@@ -1,0 +1,9 @@
+
+import type { RequestHandler } from 'express'
+import AppError from '../utils/AppError.js'
+
+const notFound: RequestHandler = (req, _res, next) => {
+  next(new AppError(`Route not found: ${req.originalUrl}`, 404))
+}
+
+export default notFound
