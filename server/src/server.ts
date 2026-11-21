@@ -27,6 +27,7 @@ import { startSubscriptionEmailScheduler } from './services/subscription-email.s
 
 const require = createRequire(import.meta.url)
 const helmet = require('helmet') as () => RequestHandler
+
 const app = express()
 
 // Global middleware
@@ -72,21 +73,26 @@ app.get(
 app.use(notFound)
 app.use(errorHandler)
 
-// Start server
-const startServer = async (): Promise<void> => {
-  try {
-    await connectDB()
+// Export Express app for Vercel
+export default app
 
-    startEmailWorker()
-    startSubscriptionEmailScheduler()
+// Local development server only
+if (process.env.VERCEL !== '1') {
+  const startServer = async (): Promise<void> => {
+    try {
+      await connectDB()
 
-    app.listen(env.PORT, () => {
-      console.log(`TaskForge server running on port ${env.PORT}`)
-    })
-  } catch (error) {
-    console.error('Server startup failed:', error)
-    process.exit(1)
+      startEmailWorker()
+      startSubscriptionEmailScheduler()
+
+      app.listen(env.PORT, () => {
+        console.log(`TaskForge server running on port ${env.PORT}`)
+      })
+    } catch (error) {
+      console.error('Server startup failed:', error)
+      process.exit(1)
+    }
   }
-}
 
-startServer()
+  startServer()
+}
