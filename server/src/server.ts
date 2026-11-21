@@ -3,8 +3,9 @@ import express from 'express'
 import { env } from './config/env.js'
 import connectDB from './config/database.js'
 import cors from 'cors'
-import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import { createRequire } from 'node:module'
+import type { RequestHandler } from 'express'
 
 import requestLogger from './middleware/requestLogger.js'
 import notFound from './middleware/notFound.js'
@@ -24,6 +25,8 @@ import dashboardRoutes from './routes/dashboard.routes.js'
 import { startEmailWorker } from './services/email-worker.service.js'
 import { startSubscriptionEmailScheduler } from './services/subscription-email.service.js'
 
+const require = createRequire(import.meta.url)
+const helmet = require('helmet') as () => RequestHandler
 const app = express()
 
 // Global middleware
